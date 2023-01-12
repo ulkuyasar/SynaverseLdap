@@ -1,3 +1,5 @@
+using Autofac;
+using Business.DependencyResolvers.Autofac;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -18,6 +20,14 @@ namespace SynaverseLdap
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+
+                .UseServiceProviderFactory(new Autofac.Extensions.DependencyInjection.AutofacServiceProviderFactory())
+                .ConfigureContainer<Autofac.ContainerBuilder>(builder =>
+                {
+                    builder.RegisterModule(new AutofacBusinessModule());
+                })
+
+
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

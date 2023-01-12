@@ -23,7 +23,7 @@ namespace SynaverseLdap.Controllers
 
 
         [HttpGet("GetList")]
-       // [Authorize(Roles = "Default")]  manager da yonet
+        // [Authorize(Roles = "Default")]  manager da yonet
         public async Task<IActionResult> GetList()
         {
             var result = await _UserOperationClaimManager.GetListAsync(null);
@@ -58,7 +58,7 @@ namespace SynaverseLdap.Controllers
         }
 
         [HttpGet("Add")]
-        [Route("Add")]
+    
         public async Task<IActionResult> Add(UserOperationClaim useroperationclaim)
         {
             useroperationclaim.Id = null;
@@ -71,7 +71,7 @@ namespace SynaverseLdap.Controllers
         }
 
         [HttpGet("Update")]
-        [Route("Update")]
+    
         public async Task<IActionResult> Update(UserOperationClaim useroperationclaim)
         {
             var result = await _UserOperationClaimManager.UpdateAsync(useroperationclaim);
@@ -83,7 +83,7 @@ namespace SynaverseLdap.Controllers
         }
 
         [HttpGet("Delete")]
-        [Route("Delete")]
+
         public async Task<IActionResult> Delete(UserOperationClaim useroperationclaim)
         {
             var result = await _UserOperationClaimManager.DeleteAsync(useroperationclaim);

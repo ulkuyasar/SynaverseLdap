@@ -9,8 +9,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -56,11 +58,13 @@ namespace SynaverseLdap
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            Core.Utilities.DefaultValues.DefaultValue.IsDevelopmetEnvironment = false;
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SynaverseLdap v1"));
+                Core.Utilities.DefaultValues.DefaultValue.IsDevelopmetEnvironment = true;
             }
 
             app.UseHttpsRedirection();
@@ -73,6 +77,20 @@ namespace SynaverseLdap
             {
                 endpoints.MapControllers();
             });
+
+            SynaverseSetAppSettingValues();
+        }
+
+        private void SynaverseSetAppSettingValues()
+        {
+            JToken jAppSettings = null;
+            if (Core.Utilities.DefaultValues.DefaultValue.IsDevelopmetEnvironment)
+                jAppSettings = JToken.Parse(File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "appsettings.Development.json")));
+            else
+                jAppSettings = JToken.Parse(File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "appsettings.json")));
+
+            Core.Utilities.DefaultValues.DefaultValue.SystemTimeZoneName = jAppSettings["DefaultValues"].SelectToken("SystemTimeZoneName").ToString();
+            
         }
     }
 }
