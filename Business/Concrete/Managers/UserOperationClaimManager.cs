@@ -1,10 +1,12 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.MethodAspects.Autofac;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace Business.Concrete.Managers
@@ -12,9 +14,12 @@ namespace Business.Concrete.Managers
     public class UserOperationClaimManager : IUserOperationClaimService
     {
         private IUserOperationClaimDal _UserOperationClaimDal;
-        public UserOperationClaimManager(IUserOperationClaimDal useroperationclaim)
+        private IUserDal _UserDal;
+
+        public UserOperationClaimManager(IUserOperationClaimDal useroperationclaim, IUserDal userDal)
         {
             _UserOperationClaimDal = useroperationclaim;
+            _UserDal = userDal;
         }
         //[ValidationAspect(typeof(UserOperationClaimValidator), Priority = 1)]
         public async Task<IResult> AddAsync(UserOperationClaim useroperationclaim)
@@ -52,7 +57,13 @@ namespace Business.Concrete.Managers
             return new SuccessDataResult<List<UserOperationClaim>>(listUserOperationClaim);
         }
 
+        [SecuredOperation("Admin")]   // super kullanım
+        public async Task<IDataResult<User>> GetByEmailAsync(string email)
+        {
 
+            return new SuccessDataResult<User>(await _UserDal.GetAsync(x => x.Email == "hamza.cetin@gmail.com"));
+           //return _UserDal.GetAsync(x=>x.Email.Equals( "hamza.cetin@gmail.com"));   
+        }
     }
 
 }

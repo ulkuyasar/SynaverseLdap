@@ -26,7 +26,15 @@ namespace Core.Extensions
 			claims.Add(new Claim(ClaimTypes.NameIdentifier, NameIdentifier));
 		}
 
-		public static void AddRoles(this ICollection<Claim> claims, string[] roles)
+        //public static void AddLdapUser(this ICollection<Claim> claims, string NameIdentifier)
+        //{
+        //    //yasar LDAP userı mı olup olmadıgını cozmek ıstermısın ?
+        //    //namespace System.Security.Claims
+        //    //{
+        //   // claims.Add(new Claim(ClaimTypes.LDAPUser mi gibi bisi, NameIdentifier));
+        //}
+
+        public static void AddRoles(this ICollection<Claim> claims, string[] roles)
 		{
 			roles.ToList().ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));			
 		}

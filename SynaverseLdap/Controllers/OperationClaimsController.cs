@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.MethodAspects.Autofac;
 using Core.Entities.Concrete;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,7 @@ namespace SynaverseLdap.Controllers
 
         [HttpGet("GetListByOtherObject/{name}")]
         //[Authorize(Roles = "Product.List")]  manager da yonet
+        
         public async Task<IActionResult> GetListByOtherObject(string name)
         {
             var result = await _OperationClaimManager.GetListAsync(name);

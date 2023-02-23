@@ -23,40 +23,40 @@ namespace SynaverseLdap.Controllers
             _UserDetailManager = userDetailManager;
         }
 
-        [HttpGet("getbyid")]
-        public async Task<IActionResult> GetById(Int32 id)
-        {
-            var result = await _UserDetailManager.GetListAsync(id);
-            if (result.Success && result.Data != null)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result.Message);
-        }
+        //[HttpGet("getbyid")]
+        //public async Task<IActionResult> GetById(Int32 id)
+        //{
+        //    var result = await _UserDetailManager.GetListAsync(id);
+        //    if (result.Success && result.Data != null)
+        //    {
+        //        return Ok(result);
+        //    }
+        //    return BadRequest(result.Message);
+        //}
 
-        [HttpGet("loginwithUserAndPwd")]
-        //[Route("loginwithUserAndPwd")]
-        public async Task<IActionResult> loginwithUserAndPwd(string email, string pwd)
-        {
-            //http://localhost/WebApi/api/Auths/loginwithUserAndPwd?email=ulkuyasaryilmaz@gmail.com&pwd=1234
-            UserForLoginDto dto = new UserForLoginDto()
-            {
-                Email = email,
-                Password = pwd
-            };
+        //[HttpGet("loginwithUserAndPwd")]
+        ////[Route("loginwithUserAndPwd")]
+        //public async Task<IActionResult> loginwithUserAndPwd(string email, string pwd)
+        //{
+        //    //http://localhost/WebApi/api/Auths/loginwithUserAndPwd?email=ulkuyasaryilmaz@gmail.com&pwd=1234
+        //    UserForLoginDto dto = new UserForLoginDto()
+        //    {
+        //        Email = email,
+        //        Password = pwd
+        //    };
 
-            var result = await _authService.LoginAsync(dto);
-            if (!result.Success)
-            {
-                return BadRequest(result.Message);
-            }
-            var tokenResult = await _authService.CreateAccessTokenAsync(result.Data);
-            if (tokenResult.Success)
-            {
-                return Ok(tokenResult);
-            }
-            return BadRequest(tokenResult.Message);
-        }
+        //    var result = await _authService.LoginAsync(dto);
+        //    if (!result.Success)
+        //    {
+        //        return BadRequest(result.Message);
+        //    }
+        //    var tokenResult = await _authService.CreateAccessTokenAsync(result.Data);
+        //    if (tokenResult.Success)
+        //    {
+        //        return Ok(tokenResult);
+        //    }
+        //    return BadRequest(tokenResult.Message);
+        //}
 
 
         [HttpGet("refreshToken")]

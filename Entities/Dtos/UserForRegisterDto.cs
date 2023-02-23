@@ -11,7 +11,9 @@ namespace Entities.Dtos
 		public string LastName { get; set; }
 		public string Email { get; set; }
 		public string Password { get; set; }
-		//public DateTime Birthday { get; set; }
-		//public Int16 Gender { get; set; }
-	}
+        public bool IsComeFromLdap { get; set; }
+
+        //public DateTime Birthday { get; set; }
+        //public Int16 Gender { get; set; }
+    }
 }

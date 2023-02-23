@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ServiceAdapters.LdapServices;
 using Core.Entities.Concrete;
 using Core.Entities.Enum;
 using Core.Utilities.Results;
@@ -21,20 +22,27 @@ namespace Business.Concrete.Managers
 		private IUserOperationClaimService _userOperationClaimService;
 		private IOperationClaimService _operationClaimService;
 
+        private ILdapService _ldapservice;
+
+        
 
 
 
-		private ITokenHelper _tokenhelper;
+
+        private ITokenHelper _tokenhelper;
 
 
-		public AuthManager(IUserService userservice, ITokenHelper tokenhelper, IUserDetailService usersdetailervice, IUserOperationClaimService userOperationClaimService, IOperationClaimService operationClaimService)
+		public AuthManager(IUserService userservice, ITokenHelper tokenhelper, IUserDetailService usersdetailervice, 
+			IUserOperationClaimService userOperationClaimService, IOperationClaimService operationClaimService,
+            ILdapService ldapservice)
 		{
 			_userservice = userservice;
 			_tokenhelper = tokenhelper;
 			_usersdetailservice = usersdetailervice;
 			_userOperationClaimService = userOperationClaimService;
 			_operationClaimService = operationClaimService;
-		}
+			_ldapservice = ldapservice;
+        }
 
 
 		public async Task<IDataResult<User>> GetUserWithEmailAsync(string email)
@@ -52,13 +60,21 @@ namespace Business.Concrete.Managers
 
 		public async Task<IDataResult<User>> LoginAsync(UserForLoginDto userForLoginDto)
 		{
-			var userToCheck = await _userservice.GetByEmailAsync(userForLoginDto.Email);
+
+			var userLdapToCheck =  _ldapservice.LdapLogin(userForLoginDto.Email, userForLoginDto.Password);
+			if (userLdapToCheck)
+			{
+				return new SuccessDataResult<User>(new User { Email = userForLoginDto.Email, FirstName= "yasar deneme",IsComeFromLdap=true }, Messages.SuccessfullToLogin);
+			}
+
+            var userToCheck = await _userservice.GetByEmailAsync(userForLoginDto.Email);
 			if ( userToCheck.Data == null || userToCheck.Success==false)
 			{
 				return new ErrorDataResult<User>(Messages.UserNotFound);
 			}
-			
-			if (!HashingHelper.VerifyPasswordHash(userForLoginDto.Password, userToCheck.Data.PasswordHash, userToCheck.Data.PasswordSalt))
+
+
+            if (!HashingHelper.VerifyPasswordHash(userForLoginDto.Password, userToCheck.Data.PasswordHash, userToCheck.Data.PasswordSalt))
 			{
 				return new ErrorDataResult<User>(Messages.PasswordError);
 			}
@@ -81,11 +97,12 @@ namespace Business.Concrete.Managers
 				Status = false,
 				FireBaseToken = "",
 				RecordStatus = false,
-				Pwd = password
-				//,
-				//Gender = userForRegisterDto.Gender,
-				//Birthday = userForRegisterDto.Birthday
-			};
+				Pwd = password,
+				IsComeFromLdap= userForRegisterDto.IsComeFromLdap
+                //,
+                //Gender = userForRegisterDto.Gender,
+                //Birthday = userForRegisterDto.Birthday
+            };
 			var result = await _userservice.AddAsync(user);
 
 			var resultAsync = await _operationClaimService.GetListAsync(OperationClaimType.Default.ToString());
@@ -128,9 +145,22 @@ namespace Business.Concrete.Managers
 
 		}
 
-		public async Task<IDataResult<AccessToken>> CreateAccessTokenAsync(User user)
+		/// <summary>
+		/// Murat servis acacak. buradan gelen yetkılerı claıms olarak atayacaksın
+		/// </summary>
+		/// <param name="claims"></param>
+		/// <returns></returns>
+		private async Task<IDataResult<List<OperationClaim>>> GetLDAPClaims()
 		{
-			var claims = _userservice.GetClaimsAsync(user);
+            
+			return await _operationClaimService.GetListAsync(null);
+
+        }
+
+        public async Task<IDataResult<AccessToken>> CreateAccessTokenAsync(User user)
+		{
+			
+			var claims = user.IsComeFromLdap ? GetLDAPClaims() : _userservice.GetClaimsAsync(user);
 			var accessToken = await _tokenhelper.CreateTokenAsync(user,claims.Result.Data);
 			return new SuccessDataResult<AccessToken>(accessToken, Messages.AccessTokenCreated);
 		}

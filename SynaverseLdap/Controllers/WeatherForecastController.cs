@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Business.MethodAspects.Autofac;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,8 @@ namespace SynaverseLdap.Controllers
             _logger = logger;
         }
 
+
+        
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {

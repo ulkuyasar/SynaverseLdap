@@ -56,7 +56,8 @@ namespace Core.Utilities.Security.Jwt
 			claims.AddNameIdentifier(user.Id.ToString());
 			claims.AddEmail(user.Email);
 			claims.AddName($"{user.FirstName} {user.LastName}");
-			claims.AddRoles(operationClaims.Select(c => c.Name).ToArray());
+            // Ldap user mı gibi bisi de yapılabilir claims.($"{user.FirstName} {user.LastName}");
+            claims.AddRoles(operationClaims.Select(c => c.Name).ToArray());
 			return claims;
 
 		}

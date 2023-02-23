@@ -20,7 +20,9 @@ namespace Core.Entities.Concrete
 		public string Pwd { get; set; }
 		public bool RecordStatus { get; set; }
 
-		public long? Id { get { return id; } set { id = value; } }
+        public bool IsComeFromLdap { get; set; }
+
+        public long? Id { get { return id; } set { id = value; } }
 		private long? id;
 
 		[NotMapped]

@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.MethodAspects.Autofac;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -36,6 +37,8 @@ namespace Business.Concrete.Managers
         {
             return new SuccessDataResult<OperationClaim>(await _OperationClaimDal.GetAsync(x => x.Id == id));
         }
+
+        
         public async Task<IDataResult<List<OperationClaim>>> GetListAsync(string name)
         {
             List<OperationClaim> listOperationClaim = null;

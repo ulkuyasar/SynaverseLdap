@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Business.Abstract;
+using Business.MethodAspects.Autofac;
 using Core.Entities.Concrete;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Authorization;
@@ -16,14 +17,29 @@ namespace SynaverseLdap.Controllers
     public class UserOperationClaimsController : ControllerBase
     {
         private IUserOperationClaimService _UserOperationClaimManager;
+        
         public UserOperationClaimsController(IUserOperationClaimService useroperationclaimManager)
         {
             _UserOperationClaimManager = useroperationclaimManager;
+           
+        }
+
+        //yasar sil
+        [HttpGet("GetLDAPUserTestAsync")]
+        
+        public async Task<IActionResult> GetLDAPUserTestAsync()
+        {
+            var result = await _UserOperationClaimManager.GetByEmailAsync("cinaryilmaz156@gmail.com");
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result.Message);
         }
 
 
         [HttpGet("GetList")]
-        // [Authorize(Roles = "Default")]  manager da yonet
+       // [Authorize(Roles = "Default")]  //  manager da yonet
         public async Task<IActionResult> GetList()
         {
             var result = await _UserOperationClaimManager.GetListAsync(null);
@@ -35,7 +51,7 @@ namespace SynaverseLdap.Controllers
         }
 
         [HttpGet("getlistbyotherobject")]
-        //[Authorize(Roles = "Product.List")]  manager da yonet
+        [Authorize(Roles = "Product.List")]  //manager da yonet
         public async Task<IActionResult> GetListByOtherObject(int otherId)
         {
             var result = await _UserOperationClaimManager.GetListAsync(otherId);

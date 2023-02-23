@@ -15,5 +15,9 @@ namespace Business.Abstract
 		Task<IResult> AddAsync(UserOperationClaim useroperationclaim);
 		Task<IResult> UpdateAsync(UserOperationClaim useroperationclaim);
 		Task<IResult> DeleteAsync(UserOperationClaim useroperationclaim);
-	}
+
+
+		//yasar sil
+        Task<IDataResult<User>> GetByEmailAsync(string email);
+    }
 }
